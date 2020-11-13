@@ -1,30 +1,43 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, ScrollView, FlatList } from 'react-native';
+import { StyleSheet, View, Button, FlatList } from 'react-native';
+import GoalItem from "./components/GoalItem";
+import GoalInput from "./components/GoalInput";
 
 export default function App() {
 
-  const [enteredGoal, setEntetedGoal] = useState('');
   const [courseGoals, setCoursedGoals] = useState([]);
+  const [isAaaMode, setIsAaaMode] = useState(false);
 
-  const goalImputHandler = enteredText => {
-    setEntetedGoal(enteredText);
+  const removGoalHendler = goalId => {
+    setCoursedGoals(currentGoals => {
+      return currentGoals.filter(goal => goal.id !== goalId );
+    });
   };
 
-  const addGoalHandler = () => {
-    setCoursedGoals(currentGoals => [...currentGoals, {key: Math.random().toString(), value: enteredGoal}]);
+  const canselGoalAdditionHendler = () => {
+    setIsAaaMode(false);
+  };
+
+
+  const addGoalHandler = goalTitle => {
+    setCoursedGoals(currentGoals => [...currentGoals, { id: Math.random().toString(), value: goalTitle }]);
+    setIsAaaMode(false);
   };
 
   return (
     <View style={styles.screen}>
-      <View style={styles.inputContiner}>
-        <TextInput placeholder="Course Goal" style={styles.input} onChangeText={goalImputHandler} value={enteredGoal} />
-        <Button title="ADD" onPress={addGoalHandler} />
-      </View>
-      <FlatList data={courseGoals} renderItem={itemData => (
-        <View style={styles.listItem}><Text>{itemData.item.value}</Text></View>
-        )}/>
-      
+     <Button title="Add new goal" onPress={() => setIsAaaMode(true)}/> 
+      <GoalInput visible={isAaaMode} onAddGoal={addGoalHandler} onCancel={canselGoalAdditionHendler} />
+      <FlatList
+        keyExtractor={(item, index) => item.id }
+        data={courseGoals}
+        renderItem={itemData => <GoalItem
+          id={itemData.item.id}
+          onDelete={removGoalHendler}
+          title={itemData.item.value}
+        />}
+      />
     </View>
   );
 }
@@ -33,22 +46,6 @@ export default function App() {
 const styles = StyleSheet.create({
   screen: {
     padding: 50
-  },
-  inputContiner: {
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'
-  },
-  input: {
-    width: '80%',
-    borderColor: "black",
-    borderWidth: 1,
-    padding: 10
-  },
-  listItem: {
-    padding: 10,
-    marginVertical: 10,
-    backgroundColor: '#ccc',
-    borderColor: 'black',
-    borderWidth: 1,
   },
 });
 
