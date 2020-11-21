@@ -21,6 +21,9 @@ export default function App() {
 
 
   const addGoalHandler = goalTitle => {
+    if(goalTitle.length === 0) {
+      return;
+    };
     setCoursedGoals(currentGoals => [...currentGoals, { id: Math.random().toString(), value: goalTitle }]);
     setIsAaaMode(false);
   };
